@@ -9,40 +9,44 @@ server.use(express.json());
 const user = [];
 const tweets = [];
 const pageTweets = [];
+let avatar = '';
 
 server.post('/sign-up', (req, res) => {
     user.push(req.body);
+    avatar = user[0].avatar;
     res.send('OK');
 });
 
 server.get('/tweets', (req, res) => {
     let page = req.query.page;
     let tweetsOfPage = page * 10;
-    console.log(page)
 
     if (page < 1){
         res.status(400).send('Informe uma página válida!');
     }
 
     for (let i = 10; i >= 0; i--){
-        console.log(tweetsOfPage - i)
         if (tweets[tweetsOfPage - i] != null){
             pageTweets.push(tweets[tweetsOfPage - i]); 
         }
     }
     
     console.log(pageTweets)
-    res.send(pageTweets);
+    res.send('pageTweets');
 });
 
 server.post('/tweets', (req, res) => {
-    let tweet = {
+    let tweet = {};
+
+    tweet = {
         user: req.headers.user,
+        avatar: avatar,
         tweet: req.body.tweet
     }
-    console.log(tweet)
+    
+    console.log(tweet.length)
     tweets.push(tweet);
-    res.send('OK');
+    res.status(201).send('OK');
 });
 
 server.listen(5000, () => console.log('server on'));
