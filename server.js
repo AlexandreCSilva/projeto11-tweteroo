@@ -48,7 +48,7 @@ server.get('/tweets', (req, res) => {
 
 server.get('/tweets/:name', (req, res) => {
     let name = req.params.name;
-    console.log(tweets[0].username)
+
     pageTweets.splice(0,pageTweets.length);
 
     for (let i = 0; i < tweets.length; i++){
