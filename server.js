@@ -13,8 +13,15 @@ let avatar = '';
 
 server.post('/sign-up', (req, res) => {
     user.push(req.body);
+    
     avatar = user[0].avatar;
-    res.send('OK');
+
+    if (avatar.length === 0 || user[0].username.length === 0){
+        res.sendStatus(400);
+        console.log('Todos os campos são obrigatórios!');
+    } else {
+        res.status(201).send('OK');
+    }
 });
 
 server.get('/tweets', (req, res) => {
@@ -22,30 +29,47 @@ server.get('/tweets', (req, res) => {
     let tweetsOfPage = page * 10;
 
     if (page < 1){
-        res.status(400).send('Informe uma página válida!');
+        res.sendStatus(400);
+        console.log('Informe uma página válida!');
     }
+    
+    pageTweets.splice(0,pageTweets.length);
 
-    for (let i = 10; i >= 0; i--){
+    for (let i = 10; i > 0; i--){
+        
         if (tweets[tweetsOfPage - i] != null){
             pageTweets.push(tweets[tweetsOfPage - i]); 
         }
     }
-    
-    console.log(pageTweets)
-    res.send('pageTweets');
+
+    res.send(pageTweets);
+});
+
+
+server.get('/tweets/:name', (req, res) => {
+    let name = req.params.name;
+    console.log(tweets[0].username)
+    pageTweets.splice(0,pageTweets.length);
+
+    for (let i = 0; i < tweets.length; i++){
+        if (tweets[i].username === name){
+            pageTweets.push(tweets[i]); 
+        }
+    }
+
+    res.send(pageTweets);
 });
 
 server.post('/tweets', (req, res) => {
     let tweet = {};
 
     tweet = {
-        user: req.headers.user,
+        username: req.headers.user,
         avatar: avatar,
         tweet: req.body.tweet
     }
     
-    console.log(tweet.length)
-    tweets.push(tweet);
+    tweets.unshift(tweet);
     res.status(201).send('OK');
 });
 
