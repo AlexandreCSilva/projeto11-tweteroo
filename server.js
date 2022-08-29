@@ -11,14 +11,23 @@ const tweets = [];
 const pageTweets = [];
 let avatar = '';
 
+const isValidUrl = url=> {
+    try { 
+        return Boolean(new URL(url)); 
+    }
+    catch(e){ 
+        return false; 
+    }
+}
+
 server.post('/sign-up', (req, res) => {
     user.push(req.body);
     
     avatar = user[0].avatar;
 
-    if (avatar.length === 0 || user[0].username.length === 0){
+    if (avatar.length === 0 || isValidUrl(avatar) === false || user[0].username.length === 0){
         res.sendStatus(400);
-        console.log('Todos os campos são obrigatórios!');
+        console.log('Todos os campos são obrigatórios! Digite dados válidos!');
     } else {
         res.status(201).send('OK');
     }
