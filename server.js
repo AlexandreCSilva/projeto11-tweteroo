@@ -26,7 +26,8 @@ server.post('/sign-up', (req, res) => {
 
 server.get('/tweets', (req, res) => {
     let page = req.query.page;
-    let tweetsOfPage = page * 10;
+    let tweetsPageStart = (page * 10) - 10;
+    let tweetsPageEnd = page * 10;
 
     if (page < 1){
         res.sendStatus(400);
@@ -35,13 +36,12 @@ server.get('/tweets', (req, res) => {
     
     pageTweets.splice(0,pageTweets.length);
 
-    for (let i = 10; i > 0; i--){
-        
-        if (tweets[tweetsOfPage - i] != null){
-            pageTweets.push(tweets[tweetsOfPage - i]); 
+    for (let i = tweetsPageStart; i < tweetsPageEnd; i++){
+        if (tweets[i] != null){
+            pageTweets.push(tweets[i]); 
         }
     }
-
+    
     res.send(pageTweets);
 });
 
@@ -68,9 +68,14 @@ server.post('/tweets', (req, res) => {
         avatar: avatar,
         tweet: req.body.tweet
     }
-    
-    tweets.unshift(tweet);
-    res.status(201).send('OK');
+
+    if (tweet.tweet === ''){
+        res.sendStatus(400);
+        console.log('O tweet não pode estar vazio!');
+    } else {
+        tweets.unshift(tweet);
+        res.status(201).send('OK');
+    }
 });
 
 server.listen(5000, () => console.log('server on'));
